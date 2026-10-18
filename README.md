@@ -6,3 +6,5 @@ For my daily learning records.
 **This is the second try. It is 12:24 a.m. on October 19th now.**
 
 **This is the third try. It is 12:32 a.m. on October 19th now.**
+
+**不好意思 差点忘了可以写中文～**
