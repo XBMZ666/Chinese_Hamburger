@@ -9,9 +9,9 @@ int main()
     int numx = 0;
     int numy = 0;
     int numz = 0;
-    while((c = scanf("%c", &c)) != '#')
+    while((scanf("%c", &c)) != EOF && c != '#' )
     {
-        if(isspace(c))
+        if(c == ' ')
         {
             numx++;
         }
