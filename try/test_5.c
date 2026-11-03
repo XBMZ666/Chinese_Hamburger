@@ -24,21 +24,55 @@ void addElem(Node * head, typeElem elem)
     head->next = p;
 }
 
+Node * getTail(Node * head)
+{
+    Node * p = head;
+
+    while (p-> next != NULL)
+    {
+        p = p->next;
+    }
+
+    return p;
+}
+
+void addElemTail(Node * tail, typeElem elem)
+{
+    Node * p = (Node *)malloc(sizeof(Node));
+    p->data = elem;
+    tail->next = p;
+    p->next = NULL;
+}
+
 void listElem(Node * head)
 {
     Node * p = head->next;
 
     if (p == NULL)
     {
-        printf("啥也没有, 只有一个头结点");
+        printf("啥也没有, 只有一个头结点\n");
         return;
     }
 
+    int first = 1;
     while (p != NULL)
     {
+        if (first)
+        {
+            first = 0;
+
+        }
+
+        else
+        {
+            printf(" ");
+        }
+
         printf("%d", p->data);
         p = p->next;
     }
+
+    printf("\n");
 }
 
 int main()
@@ -51,6 +85,9 @@ int main()
     addElem(head, 88);
     addElem(head, 99);
 
+    listElem(head);
+
+    addElemTail(getTail(head), 345);
     listElem(head);
     return 0;
 }
