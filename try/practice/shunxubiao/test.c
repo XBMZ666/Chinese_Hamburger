@@ -81,6 +81,30 @@ void listElem(SeqList * p)
     return;
 }
 
+
+//对于长度为length的顺序表, 最后一个元素对应的下标是length - 1
+//插入位置是pos, 那么对应的插入下标是pos - 1
+//插入等价于：从最后一个元素开始, 到插入位置的元素, 所有元素均向后覆盖
+void insertElem(SeqList * p, int pos, ElemType elem)
+{
+    for (int i = p->length - 1; i >= pos - 1; i--)
+    {
+        p->data[i + 1] = p->data[i];
+    }
+
+    p->data[pos - 1] = elem;
+
+    //别忘了插入元素后, 多了1个元素, 总长度应该+1
+    p->length++;
+}
+
+//删除顺序表中的元素, 实际上是将该元素之后的所有元素依次向前覆盖
+//和插入类似, 顺序表中的元素个数改变了, 最后不要忘记更新总长度
+void deleteElem(SeqList * p, int pos, int * ptrelem)
+{
+    for (int i = p->pos-1;)
+}
+
 int main()
 {
     //初始化一个顺序表类型的指针
@@ -102,7 +126,9 @@ int main()
 
     listElem(ptr);
 
+    insertElem(ptr, 3, 888);
 
+    listElem(ptr);
 
 
     
