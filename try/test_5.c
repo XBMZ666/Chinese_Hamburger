@@ -44,6 +44,8 @@ void addElemTail(Node * tail, typeElem elem)
     p->next = NULL;
 }
 
+
+
 void listElem(Node * head)
 {
     Node * p = head->next;
@@ -74,6 +76,16 @@ void listElem(Node * head)
 
     printf("\n");
 }
+
+void listElem(int )
+
+void deleteElem()
+
+void appendElem()
+{
+    return 0;
+}
+
 
 int main()
 {
