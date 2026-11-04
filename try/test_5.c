@@ -19,14 +19,14 @@ Node * initList()
 void addElem(Node * head, typeElem elem)
 {
     Node * p = (Node *)malloc(sizeof(Node));
-    p->data = elem;
-    p->next = head->next;
+    // p->data = elem;
+    // p->next = head->next;
     head->next = p;
 }
 
 Node * getTail(Node * head)
 {
-    Node * p = head;
+    // Node * p = head;
 
     while (p-> next != NULL)
     {
@@ -52,7 +52,9 @@ void listElem(Node * head)
 
     if (p == NULL)
     {
+
         printf("啥也没有, 只有一个头结点\n");
+        
         return;
     }
 
