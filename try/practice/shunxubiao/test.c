@@ -82,6 +82,7 @@ void listElem(SeqList * p)
 }
 
 
+
 //对于长度为length的顺序表, 最后一个元素对应的下标是length - 1
 //插入位置是pos, 那么对应的插入下标是pos - 1
 //插入等价于：从最后一个元素开始, 到插入位置的元素, 所有元素均向后覆盖
@@ -100,10 +101,38 @@ void insertElem(SeqList * p, int pos, ElemType elem)
 
 //删除顺序表中的元素, 实际上是将该元素之后的所有元素依次向前覆盖
 //和插入类似, 顺序表中的元素个数改变了, 最后不要忘记更新总长度
-void deleteElem(SeqList * p, int pos, int * ptrelem)
+void deleteElem(SeqList * p, int pos, int * ptrElem)
 {
-    for (int i = p->pos-1;)
+    *ptrElem = p->data[pos - 1];
+
+    for (int i = pos; i <= p->length - 1; i++)
+    {
+        p->data[i - 1] = p->data[i];
+    }
+
+    p->length--;
+
+    return;
 }
+
+
+
+
+
+//查找elem是否在顺序表中出现, 若出现则返回位置的值, 若未出现则返回-1
+int findElem(SeqList * p, ElemType elem)
+{
+    for (int i = 0; i < p->length; i++)
+    {
+        if (p->data[i] == elem)
+        {
+            return i + 1;
+        }
+    }
+
+    return -1;
+}
+
 
 int main()
 {
@@ -130,8 +159,22 @@ int main()
 
     listElem(ptr);
 
+    ElemType e;
+
+    deleteElem(ptr, 3, &e);
+    
+    listElem(ptr);
+
+    printf("删除的元素为：%d\n", e);
+    
+    listElem(ptr);
+
+    printf("查找888是否在顺序表中出现, 位置为：%d\n", findElem(ptr, 888));
+
+    printf("查找666是否在顺序表中出现, 位置为：%d\n", findElem(ptr, 666));
+
+    printf("查找360是否在顺序表中出现, 位置为：%d\n", findElem(ptr, 360));
 
     
-
     return 0;
 }
