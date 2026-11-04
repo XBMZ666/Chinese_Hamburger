@@ -71,7 +71,8 @@ void listElem(Node * head)
             first = 0;
         }
 
-        if (!first)
+        //这个if不要写成else if, 否则上面的if语句就没什么用了
+        else if (!first)
         {
             printf(" ");
         }
@@ -85,6 +86,74 @@ void listElem(Node * head)
     return;
 }
 
+
+
+Node * getTail(Node * head)
+{
+    Node * p = head;
+
+    while (p->next != NULL)
+    {
+        p = p->next;
+    }
+
+    return p;
+}
+
+
+
+//依旧是, 想往链表中插入元素, 需要先创建一个结点把元素和下一个结点的地址存储起来
+void tailinsert(Node * tail, ElemType elem)
+{
+    Node * p = (Node *)malloc(sizeof(Node));
+
+    p->data = (ElemType *)malloc(sizeof(ElemType));
+
+    p->data[0] = elem;
+
+    tail->next = p;
+
+    p->next = NULL;
+}
+
+
+//这里错的一塌糊涂
+// void emptyList(Node * head)
+// {
+//     Node * p = head;
+//     Node * q = p;
+
+//     while (p->next != NULL)
+//     {
+//         p = p->next;
+//         q = p->next->next;
+//         free(p->data);
+//         free(p);
+        
+//         p = q;
+//     }
+
+//     free(p->data);
+//     free(p);
+// }
+
+
+
+void emptyList(Node * head)
+{
+    Node * p = head->next;
+
+    while (p != NULL)
+    {
+        Node * q = p->next;
+        free(p->data);
+        free(p);
+        p = q;
+    }
+
+    //原来的head->next处的空间已经被释放了, 那么head->next成了一个野指针
+    head->next = NULL;
+}
 
 int main()
 {
@@ -103,6 +172,23 @@ int main()
     headinsert(head, 25);
 
     listElem(head);
-    
+
+    emptyList(head);
+
+    listElem(head);
+
+    head = initList();
+
+    headinsert(head, 88);
+    headinsert(head, 66);
+    tailinsert(getTail(head), 33);
+    tailinsert(getTail(head), 22);
+
+    listElem(head);
+
+    emptyList(head);
+
+    listElem(head);
+
     return 0;
 }
