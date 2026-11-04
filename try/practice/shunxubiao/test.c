@@ -120,6 +120,7 @@ void deleteElem(SeqList * p, int pos, int * ptrElem)
 
 
 //查找elem是否在顺序表中出现, 若出现则返回位置的值, 若未出现则返回-1
+//只查找第一个元素
 int findElem(SeqList * p, ElemType elem)
 {
     for (int i = 0; i < p->length; i++)
@@ -132,6 +133,20 @@ int findElem(SeqList * p, ElemType elem)
 
     return -1;
 }
+
+
+//修改某位置的元素
+void changeElem(SeqList * p, int pos, ElemType elem)
+{
+    p->data[pos - 1] = elem;
+
+    return;
+}
+
+
+
+
+
 
 
 int main()
@@ -175,6 +190,9 @@ int main()
 
     printf("查找360是否在顺序表中出现, 位置为：%d\n", findElem(ptr, 360));
 
-    
+
+    //采用动态分配内存会在堆内存上开辟空间, 最后需要通过free(开辟位置的指针)来释放内存
+    free(ptr->data);
+    free(ptr);
     return 0;
 }
