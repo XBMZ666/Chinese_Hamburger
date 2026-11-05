@@ -49,7 +49,7 @@ void strbuf_release(struct strbuf * sb)
 //通过两个缓冲区指针a、b, 交换两个缓冲区sb_a、sb_b
 void strbuf_swap(struct strbuf * a, struct strbuf * b)
 {
-    struct strbuf* temp;
+    struct strbuf * temp;
 
     temp = b;
 
@@ -98,6 +98,50 @@ void strbuf_reset(struct strbuf * sb)
 //确保在缓冲区sb中, 除了字符串已经占据的空间大小len + 1, 还有extra个字节的空闲空间
 //先计算将容量扩容到2倍后的新容量, 再计算已占据的空间大小和extra个字节共需要多少空间, 前者更大则依据前者扩容, 后者更大则依据后者扩容（刚刚好）
 void strbuf_grow(struct strbuf * sb, size_t extra)
+{
+    size_t newalloc;
+    size_t need;
+
+    newalloc = alloc * 2;
+
+    need = sb->len + 1 + extra;
+
+    if (newalloc < need)
+    {
+        newalloc = need;
+    }
+
+    //realloc函数的使用：realloc(str, newalloc), 将指针str所指向的内存块扩容至newalloc（默认newalloc大于原先内存块的容量）
+    //扩容分为原地扩容和搬移两种情况：
+    //前者直接就地扩容内存块, 那么返回的指针中存储的地址就是原先指针的地址
+    //后者将内存块中已经存储数据的部分, 先拷贝到一个新的内存块中, 再对新内存块进行扩容, 那么最终返回的指针就是新内存块的地址
+    //无论是前者还是前者, 最终都是扩容成功. 而后者的搬移扩容, 会自动地释放原先指针str所指向的内存块的内容
+    //如果扩容失败的话, 最终会返回一个空指针NULL, 由于扩容失败了, 则原先指针指向的内存块完好如初
+    //realloc函数返回的指针是空类型指针（注意不是空指针NULL）, 所以需要做一次强制转换
+
+    char * newbuf;
+    newbuf = (char *)realloc(sb->buf, newalloc);
+
+    if (newbuf == NULL)
+    {
+        printf("在为缓冲区sb扩容时, 出现错误\n",);
+
+        exit(1);
+        //在使用malloc和realloc这些用于动态分配内存的函数, 如果最终返回空指针, 那么意味着很可能电脑内存快被占满了
+        //而且函数返回值类型是void时, 没有明显的标志来作一个内存将耗尽的警告, 所以利用语句exit(1);来退出程序
+        //大部分安全检查的语句用return;, 比如传入参数失误, 上述函数都应该传入缓冲区sb的指针, 但如果有的传入了空指针NULL, 那可以作一个检测
+        //检测到本应传入缓冲区sb的指针但却传入了空指针NULL, 则直接return;
+    }
+
+    else      //扩容成功了, 那么sb->buf要么就是newbuf（原地扩容）, 要么已经被置为了空指针（搬移）
+    {
+        sb->buf = newbuf;
+
+        //别忘了扩容后, 缓冲区sb中存储的容量也随之改变了
+        sb->alloc = newalloc;
+    }
+
+}
 
 //向缓冲区sb中添加长度为len的数据, 数据指针为data
 void strbuf_add(struct strbuf * sb, const void * data, size_t len)

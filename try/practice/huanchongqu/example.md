@@ -4,7 +4,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-//缓冲区的定义
+/*
+缓冲区的定义
+*/
 //缓冲区用来存储字符串、字符串的当前长度、字符串的最大容量
 struct strbuf
 {
@@ -13,7 +15,9 @@ struct strbuf
     char * buf;      //字符串的指针
 };
 
-//Part 2A
+/*
+Part 2A
+*/
 
 //已经定义并为缓冲区sb开辟了空间, 现在要初始化缓冲区sb
 //初始化缓冲区sb的要求：分别初始化三个成员变量
@@ -41,7 +45,9 @@ int strbuf_cmp(const struct strbuf * first, const struct strbuf * second)
 //清空缓冲区sb：和释放缓冲区sb的区别是, 此时缓冲区sb的容量保持不变, 但是清空内容, 即让长度为0, 且让字符串的内容被截断
 void strbuf_reset(struct strbuf * sb)
 
-//Part 2B
+/*
+Part 2B
+*/
 
 //确保在缓冲区sb中, 除了字符串已经占据的空间大小len + 1, 还有extra个字节的空闲空间
 //先计算将容量扩容到2倍后的新容量, 再计算已占据的空间大小和extra个字节共需要多少空间, 前者更大则依据前者扩容, 后者更大则依据后者扩容（刚刚好）
@@ -68,7 +74,9 @@ size_t strbuf_avail(const struct strbuf * sb)
 //向缓冲区sb中, 内存坐标为pos的位置, 插入长度为len的数据
 void strbuf_insert(struct strbuf * sb, size_t pos, const void * data, size_t len)
 
-//Part 2C
+/*
+Part 2C
+*/
 
 //去除缓冲区sb左端的所有空格、制表符、字符\t
 void strbuf_ltrim(struct strbuf * sb)
@@ -79,7 +87,9 @@ void strbuf_rtrim(struct strbuf * sb)
 //删除缓冲区sb从pos坐标开始, 长度为len的内容
 void strbuf_remove(struct strbuf * sb, size_t pos, size_t len)
 
-//Part 2D
+/*
+Part 2D
+*/
 
 //将文件描述符为fd的所有文件内容追加到缓冲区sb中, 缓冲区sb增加hint ? hint : 8192大小
 ssize_t strbuf_read(struct strbuf * sb, int fd, size_t hint)
@@ -87,7 +97,9 @@ ssize_t strbuf_read(struct strbuf * sb, int fd, size_t hint)
 //将文件句柄为fp的一行内容（抛弃换行符）读取到缓冲区sb中
 int strbuf_getline(struct strbuf * sb, FILE * fp)
 
-//CHALLENGE
+/*
+CHALLENGE
+*/
 
 //1.实现字符串切割（C系字符串函数的一个痛点）
 
