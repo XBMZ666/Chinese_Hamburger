@@ -67,3 +67,28 @@ size_t strbuf_avail(const struct strbuf * sb)
 //向缓冲区sb中, 内存坐标为pos的位置, 插入长度为len的数据
 void strbuf_insert(struct strbuf * sb, size_t pos, const void * data, size_t len)
 
+//Part 2C
+
+//去除缓冲区sb左端的所有空格、制表符、字符\t
+void strbuf_ltrim(struct strbuf * sb)
+
+//去除缓冲区sb右端的所有空格、制表符、字符\t
+void strbuf_rtrim(struct strbuf * sb)
+
+//删除缓冲区sb从pos坐标开始, 长度为len的内容
+void strbuf_remove(struct strbuf * sb, size_t pos, size_t len)
+
+//Part 2D
+
+//将文件描述符为fd的所有文件内容追加到缓冲区sb中, 缓冲区sb增加hint ? hint : 8192大小
+ssize_t strbuf_read(struct strbuf * sb, int fd, size_t hint)
+
+//将文件句柄为fp的一行内容（抛弃换行符）读取到缓冲区sb中
+int strbuf_getline(struct strbuf * sb, FILE * fp)
+
+//CHALLENGE
+
+//1.实现字符串切割（C系字符串函数的一个痛点）
+
+//2.实现判断一个strbuf是否以指定字符串开头的功能（C系字符串函数的另一个痛点）
+
