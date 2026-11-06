@@ -148,16 +148,26 @@ void strbuf_grow(struct strbuf * sb, size_t extra)
 
 //向缓冲区sb中添加长度为len的数据, 数据指针为data
 //数据好像包括了字符串和字符？？？
+//如果是拷贝数据, 数据类型既可能是字符也可能字符串, 那可以用memcpy这个函数
+//memcpy(目标内存地址, 源内存地址, 要拷贝的字节数)：从源内存地址处开始, 拷贝给出的字节数的字节到目标内存地址处, 并不关心数据的数据类型
 void strbuf_add(struct strbuf * sb, const void * data, size_t len)
 {
-    strcat(sb->buf, (char *)data);
+    strbuf_grow(sb, len);
+
+    memcpy(sb->buf + sb->len, data, len);
+    //sb->buf即指向首字符的指针, sb->buf + sb->len - 1即指向现有字符串中尾字符的指针, sb->buf + sb->len即指向现有字符串中\0的指针
 
     sb->len += len;
+
+    //把data所指向的字符串中的len个字符追加到缓冲区sb中了, 那么应该加个\0来给缓冲区sb中的字符串收尾
+    sb->buf[sb->len] = '\0';
 }
 
 //向缓冲区sb中添加一个字符c
 void strbuf_addch(struct strbuf * sb, int c)
 {
+    strbuf_grow(sb, 1);
+
     sb->buf[sb->len] = (char)c;
 
     sb->len++;
@@ -167,18 +177,54 @@ void strbuf_addch(struct strbuf * sb, int c)
 
 //向缓冲区sb中添加一个字符串s
 void strbuf_addstr(struct strbuf * sb, const char * s)
+{
+    strbuf_grow(sb, strlen(s));
+
+    strbuf_add(sb, s, strlen(s));
+}
 
 //向缓冲区sb中添加另一个缓冲区的数据
 void strbuf_addbuf(struct strbuf * sb, const struct strbuf * sb2)
+{
+    strbuf_grow(sb, sb2->len);
+
+    strbuf_add(sb, sb2->buf, sb2->len);      //注意此处传参不要传错了
+}
 
 //设置缓冲区sb的长度len
 void strbuf_setlen(struct strbuf * sb, size_t len)
+{
+    sb->len = len;
+    //逻辑意义上截断 
+
+    sb->buf[sb->len] = '\0';
+    //物理意义上截断
+}
 
 //计算缓冲区sb中, 目前仍可以向后添加多少个字符
 size_t strbuf_avail(const struct strbuf * sb)
+{
+    return (sb->alloc - sb->len - 1);
+}
 
 //向缓冲区sb中, 内存坐标为pos的位置, 插入长度为len的数据
+//内存坐标应该是相对某一基准点的偏移量, 从0开始：0, 1, 2, 3, 4……
 void strbuf_insert(struct strbuf * sb, size_t pos, const void * data, size_t len)
+{
+    strbuf_grow(sb, len);
+
+    //memmove(目标地址, 源地址, 拷贝的字节数), memmove函数将从源地址开始的n个字节一次性地拷贝至目标地址的内存
+    //memmove函数是一次性拷贝, 区别于memcpy函数是逐个拷贝, 因此memmove函数使用后, 就算是内存重叠也可以得到正确结果
+
+    //0 1 2 3 4 5 6 pos (pos + len - 1) (pos + len)
+    //要插入的位置即pos~(pos + len - 1), 所以先把这之间长度为len的内容往后移动len
+
+    memmove(sb->buf + pos + len, sb-> buf + pos, len);
+    //好像还要考虑：在需要移动的位置后, 不一定足够len个有效数据, 而有效数据的个数为sb->len - pos
+
+    memcpy(sb->buf + pos, data, len);
+
+}
 
 /*
 Part 2C
