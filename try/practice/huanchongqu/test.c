@@ -36,6 +36,7 @@ void strbuf_attach(struct strbuf * sb, void * str, size_t len, size_t alloc)
 }
 
 //释放缓冲区sb：先把缓冲区sb里面存的字符型指针所对应的开辟的空间释放掉, 此时该字符型指针成为了野指针, 故置为空指针
+//释放了指针所指向的空间后, 指针成为了野指针, 此时的处理：①将该指针置为野指针；②给指针一个新的合法的指向
 //再把长度len和容量alloc置为0
 void strbuf_release(struct strbuf * sb)
 {
@@ -60,12 +61,14 @@ void strbuf_swap(struct strbuf * a, struct strbuf * b)
 }
 
 //将缓冲区sb中的原始内容, 即字符型指针取出, 并设置缓冲区sb为空, 即让现在缓冲区sb存储的字符型指针为空指针, 长度和容量都为0
+//这个操作类似于释放缓冲区sb
 char * strbuf_detach(struct strbuf * sb, size_t * sz)
 {
     char * content;
 
     content = sb->buf;
 
+    free(sb->buf);      //这里不释放内存空间的话, 接下来将指针置为空指针后则内存泄漏
     sb->buf = NULL;
 
     sb->len = 0;
@@ -102,7 +105,7 @@ void strbuf_grow(struct strbuf * sb, size_t extra)
     size_t newalloc;
     size_t need;
 
-    newalloc = alloc * 2;
+    newalloc = sb->alloc * 2;
 
     need = sb->len + 1 + extra;
 
@@ -145,6 +148,9 @@ void strbuf_grow(struct strbuf * sb, size_t extra)
 
 //向缓冲区sb中添加长度为len的数据, 数据指针为data
 void strbuf_add(struct strbuf * sb, const void * data, size_t len)
+{
+
+}
 
 //向缓冲区sb中添加一个字符c
 void strbuf_addch(struct strbuf * sb, int c)
@@ -164,3 +170,33 @@ size_t strbuf_avail(const struct strbuf * sb)
 //向缓冲区sb中, 内存坐标为pos的位置, 插入长度为len的数据
 void strbuf_insert(struct strbuf * sb, size_t pos, const void * data, size_t len)
 
+/*
+Part 2C
+*/
+
+//去除缓冲区sb左端的所有空格、制表符、字符\t
+void strbuf_ltrim(struct strbuf * sb)
+
+//去除缓冲区sb右端的所有空格、制表符、字符\t
+void strbuf_rtrim(struct strbuf * sb)
+
+//删除缓冲区sb从pos坐标开始, 长度为len的内容
+void strbuf_remove(struct strbuf * sb, size_t pos, size_t len)
+
+/*
+Part 2D
+*/
+
+//将文件描述符为fd的所有文件内容追加到缓冲区sb中, 缓冲区sb增加hint ? hint : 8192大小
+ssize_t strbuf_read(struct strbuf * sb, int fd, size_t hint)
+
+//将文件句柄为fp的一行内容（抛弃换行符）读取到缓冲区sb中
+int strbuf_getline(struct strbuf * sb, FILE * fp)
+
+/*
+CHALLENGE
+*/
+
+//1.实现字符串切割（C系字符串函数的一个痛点）
+
+//2.实现判断一个strbuf是否以指定字符串开头的功能（C系字符串函数的另一个痛点）
