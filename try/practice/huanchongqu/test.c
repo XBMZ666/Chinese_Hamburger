@@ -260,6 +260,16 @@ void strbuf_rtrim(struct strbuf * sb)
 
 //删除缓冲区sb从pos坐标开始, 长度为len的内容
 void strbuf_remove(struct strbuf * sb, size_t pos, size_t len)
+{
+    memmove(sb->buf + pos, sb->buf + pos + len, sb->len - (pos + len));
+    
+    sb->len -= len;
+
+    sb->buf[sb->len] = '\0';
+
+
+    
+}
 
 /*
 Part 2D
