@@ -147,13 +147,23 @@ void strbuf_grow(struct strbuf * sb, size_t extra)
 }
 
 //向缓冲区sb中添加长度为len的数据, 数据指针为data
+//数据好像包括了字符串和字符？？？
 void strbuf_add(struct strbuf * sb, const void * data, size_t len)
 {
+    strcat(sb->buf, (char *)data);
 
+    sb->len += len;
 }
 
 //向缓冲区sb中添加一个字符c
 void strbuf_addch(struct strbuf * sb, int c)
+{
+    sb->buf[sb->len] = (char)c;
+
+    sb->len++;
+
+    sb->buf[sb->len] = '\0';
+}
 
 //向缓冲区sb中添加一个字符串s
 void strbuf_addstr(struct strbuf * sb, const char * s)
