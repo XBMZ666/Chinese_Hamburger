@@ -232,9 +232,31 @@ Part 2C
 
 //去除缓冲区sb左端的所有空格、制表符、字符\t
 void strbuf_ltrim(struct strbuf * sb)
+{
+    int i = 0;
+
+    while (isspace(sb->buf[i]) && i < sb->len)
+    {
+        i++;
+    }
+
+    memmove(sb->buf, sb->buf + i, sb->len - i);
+
+    sb->len = sb->len - i;
+
+    sb->buf[sb->len] = '\0';
+}
 
 //去除缓冲区sb右端的所有空格、制表符、字符\t
 void strbuf_rtrim(struct strbuf * sb)
+{
+    while (isspace(sb->buf[sb->len - 1]) && sb->len > 0)
+    {
+        sb->len--;
+
+        sb->buf[sb->len] = '\0';
+    }
+}
 
 //删除缓冲区sb从pos坐标开始, 长度为len的内容
 void strbuf_remove(struct strbuf * sb, size_t pos, size_t len)
