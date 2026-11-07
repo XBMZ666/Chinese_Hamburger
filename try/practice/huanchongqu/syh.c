@@ -310,7 +310,7 @@ void strbuf_insert(SB * sb, size_t pos, const void * data, size_t len)
         return;
     }
 
-    
+    strbuf_grow(sb, len);
 
 }
 
