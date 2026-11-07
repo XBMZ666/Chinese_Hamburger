@@ -126,7 +126,7 @@ char * strbuf_detach(SB * sb, size_t * sz)
     
     str = sb->buf;
 
-    *sz = sb->len;
+    *sz = sb->alloc;
 
     sb->buf = NULL;
     sb->len = 0;
@@ -190,7 +190,7 @@ void strbuf_grow(SB * sb, size_t extra)
         need = newalloc;
     }
 
-    SB * newbuf;
+    char * newbuf;
     newbuf = (char *)realloc(sb->buf, need);
 
     if (newbuf == NULL)
@@ -295,7 +295,7 @@ size_t strbuf_avail(const SB * sb)
     if (sb == NULL)
     {
         printf("未找到传入的缓冲区\n");
-        return;
+        return 1;
     }
 
     return (sb->alloc - (sb->len + 1));
@@ -384,7 +384,7 @@ CHALLENGE
 SB** strbuf_split_buf(const char* str, size_t len, int terminator, int max)
 
 
-bool strbuf_begin_judge(char* target_str, const char* str, int strlen);
+bool strbuf_begin_judge(char* target_str, const char* str, int strlen)
 
 
 char* strbuf_get_mid_buf(char* target_buf, int begin, int end, int len)
