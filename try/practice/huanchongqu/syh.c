@@ -172,12 +172,69 @@ Part 2B
 */
 
 void strbuf_grow(SB * sb, size_t extra)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    size_t need;
+    need = sb->len + 1 + extra;
+
+    size_t newalloc;
+    newalloc = sb->alloc * 2;
+
+    if (need > newalloc)
+    {
+        need = newalloc;
+    }
+
+    SB * newbuf;
+    newbuf = (char *)realloc(sb->buf, need);
+
+    if (newbuf == NULL)
+    {
+        printf("内存可能已满\n");
+        exit(1);
+    }
+
+    sb->buf = newbuf;
+    sb->alloc = need;
+
+    return;
+}
 
 
 void strbuf_add(SB * sb, const void * data, size_t len)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    strbuf_grow(sb, len);
+
+    memcpy(sb->buf + sb->len, data, len);
+
+    sb->len = sb->len + len;
+
+    sb->buf[sb->len] = '\0';
+
+    return;
+}
 
 
 void strbuf_addch(SB * sb, int c)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }    
+
+}
 
 
 void strbuf_addstr(SB * sb, const char * s)
