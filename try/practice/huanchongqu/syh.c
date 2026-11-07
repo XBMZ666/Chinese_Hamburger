@@ -182,16 +182,20 @@ void strbuf_grow(SB * sb, size_t extra)
     size_t need;
     need = sb->len + 1 + extra;
 
-    size_t newalloc;
-    newalloc = sb->alloc * 2;
-
-    if (need > newalloc)
+    if (need <= sb->alloc)
     {
-        need = newalloc;
+        return;
+    }
+
+    size_t newalloc;
+    
+    while (newalloc < need)
+    {
+        newalloc *= 2;
     }
 
     char * newbuf;
-    newbuf = (char *)realloc(sb->buf, need);
+    newbuf = (char *)realloc(sb->buf, newalloc);
 
     if (newbuf == NULL)
     {
@@ -200,7 +204,7 @@ void strbuf_grow(SB * sb, size_t extra)
     }
 
     sb->buf = newbuf;
-    sb->alloc = need;
+    sb->alloc = newalloc;
 
     return;
 }
