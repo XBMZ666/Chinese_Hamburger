@@ -188,6 +188,7 @@ void strbuf_grow(SB * sb, size_t extra)
     }
 
     size_t newalloc;
+    newalloc = sb->alloc;
     
     while (newalloc < need)
     {
@@ -315,6 +316,13 @@ void strbuf_insert(SB * sb, size_t pos, const void * data, size_t len)
     }
 
     strbuf_grow(sb, len);
+
+    memmove(sb->buf + pos + len, sb-> buf + pos, sb->len - pos);
+
+    memcpy(sb->buf + pos, data, len);
+
+    sb->len += len;
+    sb->buf[sb->len] = '\0';
 
     return;
 }
