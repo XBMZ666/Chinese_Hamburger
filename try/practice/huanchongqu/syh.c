@@ -407,27 +407,187 @@ ssize_t strbuf_read(SB * sb, int fd, size_t hint)
     if (sb == NULL)
     {
         printf("未找到传入的缓冲区\n");
-        return;
+        return 1;
     }
+
+    if (hint == 0)
+    {
+        hint = 8192;
+    }
+
+    strbuf_grow(sb, hint);
+
+    size_t total = 0;
+    size_t n = 0;
+    FILE * fp = NULL;
+
+    while (1)
+    {
+        strbuf_grow(sb, 8192);
+
+        size_t avail = 0;
+        avail = strbuf_avail(sb);
+
+        if (avail == 0)
+        {
+            break;
+        }
+
+        ssize_t n;
+        n = read(fd, sb->buf + sb->len, avail);
+
+        if (n > 0)
+        {
+            total += n;
+
+            sb->len += n;
+            sb->buf[sb->len] = '\0';
+        }
+
+        else
+        {
+            break;
+        }
+    }
+
+    return total;
 }
+
 
 int strbuf_getline(SB * sb, FILE * fp)
 {
-    if (sb == NULL)
+    if (sb == NULL || fp == NULL)
     {
-        printf("未找到传入的缓冲区\n");
-        return;
+        printf("未找到传入的缓冲区或文件\n");
+        return -1;
     }
+    
+    char c = 0;
+    int read = 0;
+    
+    while ((c = fgetc(fp)) != EOF) 
+    {
+        read = 1;
+
+        if (c == '\n') 
+        {
+            break;
+        }
+
+        strbuf_addch(sb, c);
+    }
+    
+    if (!read && c == EOF) 
+    {
+        return -1;
+    }
+    
+    return sb->len;
 }
+
 /*
 CHALLENGE
 */
 
-SB** strbuf_split_buf(const char* str, size_t len, int terminator, int max)
+SB ** strbuf_split_buf(const char* str, size_t len, int terminator, int max)
+{
+    SB ** part;
+    part = (SB **)malloc(sizeof(SB *) * (len + 1));
+
+    if (part == NULL) 
+    {
+        printf("内存可能已满\n");
+        exit(1);
+    }
+
+    size_t start = 0;
+    int num = 0;
+
+    while (start < len && (max <= 0 || num < max))
+    {
+        while (start < len && str[start] == terminator)
+            start++;
+
+        if (start == len)
+            break;
+
+        size_t end = 0;
+        end = start;
+        while (end < len && str[end] != terminator)
+        {
+            end++;
+        }
+
+        SB *sb;
+        sb = (SB *)malloc(sizeof(SB));
+
+        if (sb == NULL) 
+        {
+            printf("内存可能已满\n");
+            exit(1);
+        }
+
+        strbuf_init(sb, end - start + 1);
+        strbuf_add(sb, str + start, end - start);
+
+        part[num] = sb;
+        num++;
+        start = end;
+    }
+
+    part[num] = NULL;
+
+    return part;
+}
 
 
 bool strbuf_begin_judge(char* target_str, const char* str, int strlen)
+{
+    if (strlen == 0) 
+    {
+        return true;
+    }
+
+    if (target_str == NULL || str == NULL || strlen < 0)
+    {
+        return false;
+    }
+
+    for (int i = 0; str[i] != '\0'; i++)
+    {
+        if (i >= strlen || str[i] != target_str[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 
-char* strbuf_get_mid_buf(char* target_buf, int begin, int end, int len)
+char * strbuf_get_mid_buf(char * target_buf, int begin, int end, int len)
+{
+    if (target_buf == NULL || begin < 0 || begin > end || end > len)
+    {
+        return NULL;
+    }
 
+    char * p;
+
+    p = (char *)malloc(end - begin + 1);
+
+    if (p == NULL)
+    {
+        printf("内存可能已满\n");
+        exit(1);
+    }
+
+    for(int i = 0; i < end - begin; i++)
+    {
+        p[i] = target_buf[begin + i];
+    }
+
+    p[end - begin] = '\0';
+
+    return p;
+}
