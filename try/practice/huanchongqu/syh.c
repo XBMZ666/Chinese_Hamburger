@@ -2,100 +2,124 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 /*
 缓冲区的定义
 */
 
-struct strbuf
+typedef struct strbuf
 {
     int len;     
     int alloc;      
     char * buf;     
-};
+}SB;
 
 /*
 Part 2A
 */
 
-void strbuf_init(struct strbuf * sb, size_t alloc)
+void strbuf_init(SB * sb, size_t alloc)
 {
-    sb->buf = (struct strbuf)
+    if (sb == NULL)
+    {
+        printf("未找到缓冲区\n");
+        return;
+    }
+
     sb->len = 0;
+    sb->alloc = 0;
+    sb->buf = NULL;
+
+    if (alloc == NULL)
+    {
+        return;
+    }
+
+    sb->buf = (char *)malloc(sizeof(char) * alloc);
+
+    if (sb->buf == NULL)
+    {
+        printf("内存可能已满\n");
+        exit(1);
+    }
+
+    sb->buf[0] = '\0';
+
     sb->alloc = alloc;
 }
 
 
-void strbuf_attach(struct strbuf * sb, void * str, size_t len, size_t alloc)
+void strbuf_attach(SB * sb, void * str, size_t len, size_t alloc)
 
 
-void strbuf_release(struct strbuf * sb)
+void strbuf_release(SB * sb)
 
 
-void strbuf_swap(struct strbuf * a, struct strbuf * b)
+void strbuf_swap(SB * a, SB * b)
 
 
-char * strbuf_detach(struct strbuf * sb, size_t * sz)
+char * strbuf_detach(SB * sb, size_t * sz)
 
 
-int strbuf_cmp(const struct strbuf * first, const struct strbuf * second)
+int strbuf_cmp(const SB * first, const SB * second)
 
 
-void strbuf_reset(struct strbuf * sb)
+void strbuf_reset(SB * sb)
 
 /*
 Part 2B
 */
 
-void strbuf_grow(struct strbuf * sb, size_t extra)
+void strbuf_grow(SB * sb, size_t extra)
 
 
-void strbuf_add(struct strbuf * sb, const void * data, size_t len)
+void strbuf_add(SB * sb, const void * data, size_t len)
 
 
-void strbuf_addch(struct strbuf * sb, int c)
+void strbuf_addch(SB * sb, int c)
 
 
-void strbuf_addstr(struct strbuf * sb, const char * s)
+void strbuf_addstr(SB * sb, const char * s)
 
 
-void strbuf_addbuf(struct strbuf * sb, const struct strbuf * sb2)
+void strbuf_addbuf(SB * sb, const SB * sb2)
 
 
-void strbuf_setlen(struct strbuf * sb, size_t len)
+void strbuf_setlen(SB * sb, size_t len)
 
 
-size_t strbuf_avail(const struct strbuf * sb)
+size_t strbuf_avail(const SB * sb)
 
 
-void strbuf_insert(struct strbuf * sb, size_t pos, const void * data, size_t len)
+void strbuf_insert(SB * sb, size_t pos, const void * data, size_t len)
 
 /*
 Part 2C
 */
 
-void strbuf_ltrim(struct strbuf * sb)
+void strbuf_ltrim(SB * sb)
 
 
-void strbuf_rtrim(struct strbuf * sb)
+void strbuf_rtrim(SB * sb)
 
 
-void strbuf_remove(struct strbuf * sb, size_t pos, size_t len)
+void strbuf_remove(SB * sb, size_t pos, size_t len)
 
 /*
 Part 2D
 */
 
-ssize_t strbuf_read(struct strbuf * sb, int fd, size_t hint)
+ssize_t strbuf_read(SB * sb, int fd, size_t hint)
 
 
-int strbuf_getline(struct strbuf * sb, FILE * fp)
+int strbuf_getline(SB * sb, FILE * fp)
 
 /*
 CHALLENGE
 */
 
-struct strbuf** strbuf_split_buf(const char* str, size_t len, int terminator, int max)
+SB** strbuf_split_buf(const char* str, size_t len, int terminator, int max)
 
 
 bool strbuf_begin_judge(char* target_str, const char* str, int strlen);
