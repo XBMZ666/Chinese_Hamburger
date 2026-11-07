@@ -379,16 +379,46 @@ void strbuf_rtrim(SB * sb)
 
 
 void strbuf_remove(SB * sb, size_t pos, size_t len)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    if (pos + len > sb->len) 
+    {
+        len = sb->len - pos;
+    }
+    
+    memmove(sb->buf + pos, sb->buf + pos + len, sb->len - (pos + len));
+
+    sb->len -= len;
+    sb->buf[sb->len] = '\0';
+}
+
 
 /*
 Part 2D
 */
 
 ssize_t strbuf_read(SB * sb, int fd, size_t hint)
-
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+}
 
 int strbuf_getline(SB * sb, FILE * fp)
-
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+}
 /*
 CHALLENGE
 */
