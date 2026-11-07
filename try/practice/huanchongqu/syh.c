@@ -232,24 +232,87 @@ void strbuf_addch(SB * sb, int c)
     {
         printf("未找到传入的缓冲区\n");
         return;
-    }    
+    }
+    
+    strbuf_grow(sb, sizeof(char));
 
+    sb->buf[sb->len] = (char)c;
+    
+    sb->len++;
+
+    sb->buf[sb->len] = '\0';
+
+    return;
 }
 
 
 void strbuf_addstr(SB * sb, const char * s)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    strbuf_add(sb, s, strlen(s));
+
+    return;
+}
 
 
 void strbuf_addbuf(SB * sb, const SB * sb2)
+{
+    if (sb == NULL || sb2 == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    strbuf_add(sb, sb2->buf, sb2->len);
+
+    return;
+}
 
 
 void strbuf_setlen(SB * sb, size_t len)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    sb->len = len;
+
+    sb->buf[len] = '\0';
+
+    return;
+}
 
 
 size_t strbuf_avail(const SB * sb)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    return (sb->alloc - (sb->len + 1));
+}
 
 
 void strbuf_insert(SB * sb, size_t pos, const void * data, size_t len)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    
+
+}
 
 /*
 Part 2C
