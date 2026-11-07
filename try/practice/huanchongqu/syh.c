@@ -312,6 +312,7 @@ void strbuf_insert(SB * sb, size_t pos, const void * data, size_t len)
 
     strbuf_grow(sb, len);
 
+    return;
 }
 
 /*
@@ -319,9 +320,50 @@ Part 2C
 */
 
 void strbuf_ltrim(SB * sb)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    int i = 0;
+
+    while (i < sb->len && isspace(sb->buf[i]))
+    {
+        i++;
+    }
+
+    if (i == 0)
+    {
+        return;
+    }
+
+    memmove(sb->buf, sb->buf + i, sb->len - i + 1);
+
+    sb->len -= i;
+
+    return;
+}
 
 
 void strbuf_rtrim(SB * sb)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    while (sb->len > 0 && isspace(sb->buf[sb->len - 1]))
+    {
+        sb->len--;
+    }
+
+    sb->buf[sb->len] = '\0';
+
+    return;
+}
 
 
 void strbuf_remove(SB * sb, size_t pos, size_t len)
