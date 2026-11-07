@@ -101,6 +101,11 @@ CHALLENGE
 */
 
 //1.实现字符串切割（C系字符串函数的一个痛点）
+struct strbuf** strbuf_split_buf(const char* str, size_t len, int terminator, int max)
 
 //2.实现判断一个strbuf是否以指定字符串开头的功能（C系字符串函数的另一个痛点）
+bool strbuf_begin_judge(char* target_str, const char* str, int strlen);
+
+//3.获取字符串从坐标 [begin, end) 的所有内容（可以分成引用和拷贝两个模式）
+char* strbuf_get_mid_buf(char* target_buf, int begin, int end, int len)
 

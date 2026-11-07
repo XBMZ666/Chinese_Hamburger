@@ -127,7 +127,7 @@ void strbuf_grow(struct strbuf * sb, size_t extra)
 
     if (newbuf == NULL)
     {
-        printf("在为缓冲区sb扩容时, 出现错误\n",);
+        printf("在为缓冲区sb扩容时, 出现错误\n");
 
         exit(1);
         //在使用malloc和realloc这些用于动态分配内存的函数, 如果最终返回空指针, 那么意味着很可能电脑内存快被占满了
