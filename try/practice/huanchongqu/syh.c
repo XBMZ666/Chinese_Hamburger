@@ -23,15 +23,15 @@ void strbuf_init(SB * sb, size_t alloc)
 {
     if (sb == NULL)
     {
-        printf("未找到缓冲区\n");
+        printf("未找到传入的缓冲区\n");
         return;
     }
 
+    sb->buf = NULL;
     sb->len = 0;
     sb->alloc = 0;
-    sb->buf = NULL;
 
-    if (alloc == NULL)
+    if (alloc == 0)
     {
         return;
     }
@@ -47,25 +47,125 @@ void strbuf_init(SB * sb, size_t alloc)
     sb->buf[0] = '\0';
 
     sb->alloc = alloc;
+
+    return;
 }
 
 
 void strbuf_attach(SB * sb, void * str, size_t len, size_t alloc)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    if (sb->buf != NULL)
+    {
+        free(sb->buf);
+    }
+
+    sb->buf = (char *)str;
+
+    sb->len = len;
+    sb->alloc = alloc;
+
+    return;
+}
 
 
 void strbuf_release(SB * sb)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    if (sb->buf != NULL)
+    {
+        free(sb->buf);
+    }
+
+    sb->buf = NULL;
+    sb->len = 0;
+    sb->alloc = 0;
+
+    return;
+}
 
 
 void strbuf_swap(SB * a, SB * b)
+{
+    if (a == NULL || b == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    SB temp;
+
+    temp = *b;
+
+    *b = *a;
+    *a = temp;
+
+    return;
+}
 
 
 char * strbuf_detach(SB * sb, size_t * sz)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return NULL;
+    }
+
+    char * str;
+    
+    str = sb->buf;
+
+    *sz = sb->len;
+
+    sb->buf = NULL;
+    sb->len = 0;
+    sb->alloc = 0;
+
+    return str;
+}
 
 
 int strbuf_cmp(const SB * first, const SB * second)
+{
+    if (first == NULL || second == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return -1;
+    }
+
+    if (first->len != second->len)
+    {
+        return 1;
+    }
+
+    return strcmp(first->buf, second->buf);
+}
 
 
 void strbuf_reset(SB * sb)
+{
+    if (sb == NULL)
+    {
+        printf("未找到传入的缓冲区\n");
+        return;
+    }
+
+    sb->buf[0] = '\0';
+    sb->len = 0;
+
+    return;
+}
 
 /*
 Part 2B
