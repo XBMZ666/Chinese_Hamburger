@@ -10,6 +10,13 @@ int main()
     {
         printf("%s\n", strs[i]);
     }
+
+    strs[2][5] = 'o';
+
+    for (int i = 0; i < 3; i++)
+    {
+        printf("%s\n", strs[i]);
+    }
     
     return 0;
 }
