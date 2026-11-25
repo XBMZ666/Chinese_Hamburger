@@ -60,10 +60,47 @@ typedef struct
 
 
 
-//把文件名和其所在目录拼接在一起
+//定义函数make_path：把文件名和其所在目录拼接在一起, 获得文件的完整路径
 char * make_path(const char * directory, const char * name)
 {
     char * full_path;
+
+    int need_slash = 0;
+    //常规目录：非空, 并且不以/结尾
+    //非常规目录：空目录、根目录/等以/结尾的目录
+    //拼接文件名和常规目录时, 需要在之间添加一个斜杠/
+    if (directory[0] != '\0' && directory[strlen(directory) - 1] != '/')
+    {
+        need_slash = 1;
+    }
+
+    int length = 0;      //拼接后的字符串总长度
+    length = strlen(directory) + strlen(name) + need_slash + 1;
+
+    full_path = (char *)malloc(length * sizeof(char));
+
+    if (full_path == NULL)
+    {
+        return NULL;
+    }
+
+    if (directory[0] == '\0')
+    {
+        //目录为空时, 完整路径即文件名
+        snprintf(full_path, length, "%s", name);
+    }
+
+    else if(need_slash != 0)
+    {
+        //目录非空, 而且需要在目录和文件名之间添加斜杠（即常规目录）
+        snprintf(full_path, length, "%s/%s", directory, name);
+    }
+
+    else
+    {
+        //目录非空, 但是不用在目录和文件名之间添加斜杠（如根目录/）
+        snprintf(full_path, length, "%s%s", directory, name);
+    }
 
     return full_path;
 }
@@ -73,7 +110,18 @@ char * make_path(const char * directory, const char * name)
 
 
 
-//解析命令行参数
+//定义函数add_item：向文件列表中添加新的文件
+int add_item(FileList * list, const char * directory, const char * name)
+{
+
+}
+
+
+
+
+
+
+//定义函数parse_options：解析命令行参数
 int parse_options(int argc, char ** argv)
 {
 
