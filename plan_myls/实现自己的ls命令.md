@@ -75,8 +75,8 @@ ls -i /home /etc
 即**system/status**. 用于查询、处理文件的状态信息. 在本实现中, 主要用到了：
 1. 类型`struct stat`：保存文件的详细信息
 2. `lstat`：查询文件的详细信息
-3. `S_ISDIR`：判断文件类型
-4. `S_IXUSR`：检查文件权限
+3. 宏`S_ISDIR`：判断文件类型
+4. 宏`S_IXUSR`：检查文件权限
 
 * `sys/type.h`\
 即**system/type**. 用于提供系统常用的变量类型. 在本实现中, 主要用到了：
@@ -125,16 +125,18 @@ cd ~/Mywork
 ```bash
 ls
 ```
-应该可以看到
+应该可以看到：
 ```text
 myls.c
 ``` 
 
-3. 把源文件编译为可执行程序
+3. 把源文件编译为可执行程序\
 确保已经切换到工作目录下, 且源文件`myls.c`在工作目录下, 那么就可以执行：
+
 ```bash
 gcc -std=c11 -Wall -Wextra -Wpedantic myls.c -o myls
 ```
+
 内容|作用
 :-:|:-:
 gcc|调用C语言编译器
@@ -152,3 +154,4 @@ myls.c|要编译的源文件
 ./myls -ai -t /home
 ./myls -i /home /etc
 ```
+同时可以输入`ls`命令, 比对输出结果.
