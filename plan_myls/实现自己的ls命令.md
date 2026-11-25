@@ -1,4 +1,5 @@
 # 实现自己的ls命令
+
 知识笔记为主.
 渲染后, 一级标题和二级标题下会自带分隔线
 ---
@@ -112,3 +113,42 @@ ls -i /home /etc
 4. 宏`PATH_MAX`：系统给路径长度提供的参考上限
 
 ---
+
+### 源文件`myls.c`实现后的操作
+1. 创建工作目录并切换到工作目录
+```bash
+mkdir -p ~/MyWork
+cd ~/Mywork
+```
+2. 把源文件放入工作目录, 并检测源文件是否存在
+将`myls.c`复制并粘贴到工作目录下, 接着可以利用`ls`命令验证源文件的存在：
+```bash
+ls
+```
+应该可以看到
+```text
+myls.c
+``` 
+
+3. 把源文件编译为可执行程序
+确保已经切换到工作目录下, 且源文件`myls.c`在工作目录下, 那么就可以执行：
+```bash
+gcc -std=c11 -Wall -Wextra -Wpedantic myls.c -o myls
+```
+内容|作用
+:-:|:-:
+gcc|调用C语言编译器
+-std=c11|按C11标准编译
+-Wall -Wextra -Wpedantic|显示较全面的编译警告, 帮助发现问题
+myls.c|要编译的源文件
+-o myls|将生成的可执行程序命名为myls
+
+4. 试着运行生成的可执行程序（仿照`ls`命令的输入示例）
+```bash
+./myls -a -l
+./myls -a /home
+./myls -alR /
+./myls -t
+./myls -ai -t /home
+./myls -i /home /etc
+```
