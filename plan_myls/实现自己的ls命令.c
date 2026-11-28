@@ -113,7 +113,68 @@ char * make_path(const char * directory, const char * name)
 //定义函数add_item：向文件列表中添加新的文件
 int add_item(FileList * list, const char * directory, const char * name)
 {
+    FileItem new_items;
 
+    if (list->count == list->capacity)
+    {
+        if (list->capacity == 0)      //第一次添加文件时, 文件列表的容量和现有文件数量都为0
+        {
+            new_capacity = 16;
+        }
+
+        else      //文件列表已满
+        {
+            new_capacity = list->capacity * 2;
+        }
+
+        new_items = (FileItem *)realloc(list->items, new_capacity * sizeof(FileItem));
+        if (new_items == NULL)
+        {
+            fprintf(stderr, "myls：内存不足！\n");
+            return 1;
+        }
+
+        list->items = new_items;
+        list->capacity = new_capacity;
+    }
+
+    char * name_copy;
+    name_copy = (char *)malloc(strlen(name) + 1);
+    if (name_copy == NULL)
+    {
+        fprintf(stderr, "myls：内存不足！\n");
+
+        return 1;
+    }
+
+    strcpy(name_copy, name);
+
+    char * full_path;
+
+    full_path = make_path(directory, name_copy);
+    if (full_path == NULL)      //为完整路径申请内存失败, 此时仅仅为文件名的拷贝申请内存成功了, 则需要释放掉这部分内存以防内存泄漏
+    {
+        free(name_copy);
+        fprintf(stderr, "myls：内存不足！\n");
+
+        return 1;
+    }
+
+    if (lstat(full_path, &(list->items[list->count].info)) == -1)      //查询full_path这个位置的详细信息, 并把详细信息存入该文件对应的info
+    {
+        fprintf(stderr, "myls：无法访问'%s'：%s！\n");
+        
+        free(name_copy);
+        free(full_path);
+
+        return 0;
+    }
+
+    list->items[list->count].name = name_copy;
+    list->items[list->path].path = full_path;
+    list->count++;
+
+    return 0;
 }
 
 
