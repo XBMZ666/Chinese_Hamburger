@@ -184,9 +184,102 @@ int add_item(FileList * list, const char * directory, const char * name)
 
 
 //定义函数parse_options：解析命令行参数
-int parse_options(int argc, char ** argv)
+int parse_options(int argc, char ** argv, const Options * options, int * first_path)
 {
+    int argv_index = 1;      //第1个命令行参数是程序名, 所以需要从第2个命令行参数开始解析, 其索引为1
 
+    //为解析命令行参数的两个条件设定两个标记
+    int flag_a = 0;
+    int flag_b = 0;
+
+    if (argv_index < argc)      //确认至少有两个命令行参数, 否则就是最简单的无参数的ls命令；若正常解析, 则保证在argv_index的值达到argc后停止解析（不再存在对应的命令行参数）
+    {
+        flag_a = 1;
+    }
+
+    if (argv[argv_index][0] == '-' && argv[argv_index][1] != '\0')      //确认正在解析的命令行参数是以-开头的, 且不是单独的-
+    {
+        flag_b = 1;
+    }
+
+    while (flag_a && flag_b)
+    {
+        if (strcmp(argv[argv_index], "--") == 0)      //--表示选项已经结束, 接下来的命令行参数是文件名
+        {
+            argv_index++;
+            break;
+        }
+
+        int char_index = 1;      //所解析的命令行参数, 第1个字符为-, 则从第2个字符开始解析, 其索引为1
+        while (argv[argv_index][char_index] != '\0')      //一直解析, 直至遇到所解析的命令行参数的最末（\0）为止
+        {
+            char option = 0;
+            option = argv[argv_index][char_index];
+
+            if (option == 'a')
+            {
+                options->show_all = 1;
+            }
+
+            else if (option == 'l')
+            {
+                options->long_format = 1;
+            }
+
+            else if (option == 'R')
+            {
+                options->recursive = 1;
+            }
+
+            else if (option == 't')
+            {
+                options->sort_by_time = 1;
+            }
+
+            else if (option == 'r')
+            {
+                options->reverse = 1;
+            }
+
+            else if (option == 'i')
+            {
+                options->show_inode = 1;
+            }
+
+            else if (option == 's')
+            {
+                options->show_blocks = 1;
+            }
+
+            else
+            {
+
+            }
+
+            char_index++;
+        }
+
+        argv_index++;
+
+        flag_a = 0;
+        flag_b = 0;
+
+        if (argv_index < argc)      //保证在argv_index的值达到argc后停止解析（不再存在对应的命令行参数）
+        {
+            flag_a = 1;
+        }
+
+
+        if (argv[argv_index][0] == '-' && argv[argv_index][1] != '\0')      //确认正在解析的命令行参数是以-开头的, 且不是单独的-
+        {
+            flag_b = 1;
+        }
+    }
+    
+    //此时索引可能无对应的命令行参数, 也可能对应的命令行参数为一个路径
+    *first_path = argv_index;
+
+    return 0;
 }
 
 
