@@ -481,7 +481,7 @@ void make_mode_string(mode_t mode, char text[11])
     }
 
     else if (S_ISFIFO(mode))
-    {实现自己的ls命令
+    {
         text[0] = 'p';
     }
 
@@ -549,7 +549,40 @@ void make_mode_string(mode_t mode, char text[11])
     }
 
     text[10] = '\0';
+
+    return;
 }
+
+
+
+
+
+//定义函数make_time_string：把修改时间转换为ls风格
+void make_time_string(time_t file_time, char buffer[32])
+{
+    time_t now = time(NULL);       //获取当前时间
+
+    struct tm * time_info = localtime(&file_time);       //转换为本地时间的年月日时分秒
+    if (time_info == NULL)
+    {
+        snprintf(buffer, 32, "未知时间");
+
+        return;
+    }
+
+    if (now - file_time >15552000 || file_time > now + 3600)
+    {
+        strftime(buffer, 32, "%b %e  %Y", time_info);
+    }
+
+    else
+    {
+        strftime(buffer, 32, "%b %e %H:%M", time_info);
+    }
+
+    return;
+}
+
 
 
 
