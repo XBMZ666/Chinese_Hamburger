@@ -184,7 +184,7 @@ int add_item(FileList * list, const char * directory, const char * name)
 
 
 //定义函数parse_options：解析命令行参数
-int parse_options(int argc, char ** argv, const Options * options, int * first_path)
+int parse_options(int argc, char ** argv, Options * options, int * first_path)
 {
     int argv_index = 1;      //第1个命令行参数是程序名, 所以需要从第2个命令行参数开始解析, 其索引为1
 
@@ -290,6 +290,12 @@ int parse_options(int argc, char ** argv, const Options * options, int * first_p
 int main(int argc, char ** argv)
 {
     Options opt = {0, 0, 0, 0, 0, 0, 0};
+
+    int first_path = 1;
+
+    parse_options(argc, argv, &opt, &first_path);
+
+    printf("%d %d %d", opt.show_all, opt.recursive, opt.show_inode);
 
     return 0;
 }
