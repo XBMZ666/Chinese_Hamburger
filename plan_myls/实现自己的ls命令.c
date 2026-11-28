@@ -289,6 +289,65 @@ int compare_items(const FileItem * first, const FileItem * second, const Options
 
 
 
+//定义函数number_width：计算一个非负整数占用的字符数
+int number_width(int number)
+{
+    int width = 1;       //数字0会占用1个字符
+    while (number >= 10)
+    {
+        width++;
+
+        number /= 10;
+    }
+
+    return width;
+}
+
+
+
+
+
+
+//定义函数get_user_name：由用户编号获取可显示的名称
+const char * get_user_name(uid_t user_id, char buffer[32])
+{
+    struct passwd * user = getpwuid(user_id);
+    if (user != NULL)
+    {
+        return user->pw_name;
+    }
+
+    //通过用户编号并未查询到用户信息
+    snprintf(buffer, 32, "%d", user_id);       //把用户编号转换为字符串
+
+    return buffer;
+}
+
+
+
+
+
+
+//定义函数get_group_name：由用户组编号获取可显示的名称
+const char * get_group_name(gid_t group_id, char buffer[32])
+{
+    struct group * group = getgrgid(group_id);
+    if (group != NULL)
+    {
+        return group->gr_name;
+    }
+
+    //通过用户组编号并未查询到用户组信息
+    snprintf(buffer, 32, "%d", group_id);       //把用户组编号转换为字符串
+
+    return buffer;
+}
+
+
+
+
+
+
 //定义函数sort_items：使用冒泡排序整理当前目录的文件
 void sort_items(FileList * list, const Options * options)
 {
