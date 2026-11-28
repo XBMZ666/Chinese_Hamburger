@@ -204,7 +204,7 @@ int add_item(FileList * list, const char * directory, const char * name)
     {
         fprintf(stderr, "myls：无法访问'%s'：%s！\n", full_path, strerror(errno));
         
-        fr实现自己的ls命令ee(name_copy);
+        free(name_copy);
         free(full_path);
 
         return 1;
@@ -401,6 +401,52 @@ const char * get_group_name(gid_t group_id, char buffer[32])
 PrintWidths calculate_widths(const FileList * list)
 {
     PrintWidths widths = {0, 0, 0, 0, 0, 0};
+
+    char number_buffer[32];
+
+    int current = 0;
+    //某一种列的所需宽度, 取在文件列表中, 所有文件该列的最大宽度
+    for (int index = 0; index < list->count; index++)       //遍历文件列表中的每一个文件
+    {
+        const FileItem * item = &list->items[index];
+
+        current = number_width(item->info.st_ino);
+        if (current > widths.inode_width)
+        {
+            widths.inode_width = current;
+        }
+
+        current = number_width(item->info.st_blocks / 2);
+        if (current > widths.block_width)
+        {
+            widths.block_width = current;
+        }
+
+        current = number_width(item->info.st_nlink);
+        if (current > widths.link_width)
+        {
+            widths.link_width = current;
+        }
+
+        current = strlen(get_user_name(item->info.st_uid, number_buffer));
+        if (current > widths.user_width)
+        {
+            widths.user_width = current;
+        }
+
+        current = strlen(get_group_name(item->info.st_gid, number_buffer));
+        if (current > widths.group_width)
+        {
+            widths.group_width = current;
+        }
+
+        current = number_width(item->info.st_size);
+        if (current > widths.size_width)
+        {
+            widths.size_width = current;
+        }
+
+    }
 
     return widths;
 }
