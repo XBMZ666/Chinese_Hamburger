@@ -110,6 +110,29 @@ char * make_path(const char * directory, const char * name)
 
 
 
+
+//定义函数free_list：释放文件列表占用的所有动态内存
+void free_list(FileList * list)
+{
+    for (int index = 0; index < list->count; index++)
+    {
+        free(list->items[index].name);
+        free(list->items[index].path);
+    }
+
+    free(list->items);
+
+    list->items = NULL;
+    list->count = 0;
+    list->capacity = 0;
+
+    return;
+}
+
+
+
+
+
 //定义函数add_item：向文件列表中添加新的文件
 int add_item(FileList * list, const char * directory, const char * name)
 {
@@ -132,7 +155,7 @@ int add_item(FileList * list, const char * directory, const char * name)
         if (new_items == NULL)
         {
             fprintf(stderr, "myls：内存不足！\n");
-            return 1;
+            return 0;
         }
 
         list->items = new_items;
@@ -145,7 +168,7 @@ int add_item(FileList * list, const char * directory, const char * name)
     {
         fprintf(stderr, "myls：内存不足！\n");
 
-        return 1;
+        return 0;
     }
 
     strcpy(name_copy, name);
@@ -158,7 +181,7 @@ int add_item(FileList * list, const char * directory, const char * name)
         free(name_copy);
         fprintf(stderr, "myls：内存不足！\n");
 
-        return 1;
+        return 0;
     }
 
     if (lstat(full_path, &(list->items[list->count].info)) == -1)      //查询full_path这个位置的详细信息, 并把详细信息存入该文件对应的info
@@ -168,14 +191,53 @@ int add_item(FileList * list, const char * directory, const char * name)
         free(name_copy);
         free(full_path);
 
-        return 0;
+        return 1;
     }
 
     list->items[list->count].name = name_copy;
     list->items[list->count].path = full_path;
     list->count++;
 
-    return 0;
+    return 1;
+}
+
+
+
+
+
+
+//定义函数read_directory：读取一个目录到文件列表
+int read_directory(const char * path, int show_all, FileList * list)
+{
+    DIR * directory = opendir(path);
+
+    struct dirent * entry;
+
+    if (directory == NULL)
+    {
+        //目录打开失败
+        return 0;
+    }
+
+    while ((entry = readdir(directory)) != NULL)
+    {
+        if (!show_all && entry->d_name[0] == '.')      //不读取以.开头的隐藏文件时则跳过隐藏文件这一项
+        {
+            continue;
+        }
+
+        if (!add_item(list, path, entry->d_name))
+        {
+            //将目录中的某一项加入文件列表时, 出现了错误
+            free_list(list);
+            closedir(directory);
+            
+            return 0;
+        }
+    }
+
+    closedir(directory);
+    return 1;
 }
 
 
@@ -279,7 +341,7 @@ int parse_options(int argc, char ** argv, Options * options, int * first_path)
     //此时索引可能无对应的命令行参数, 也可能对应的命令行参数为一个路径
     *first_path = argv_index;
 
-    return 0;
+    return 1;
 }
 
 
