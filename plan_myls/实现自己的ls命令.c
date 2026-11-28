@@ -60,6 +60,22 @@ typedef struct
 
 
 
+//定义结构体类型PrintWidths：用于保存打印输出时各内容的对应宽度
+typedef struct
+{
+    int inode_width;     //inode编号列所需的宽度
+    int block_width;     //磁盘块数列所需的宽度
+    int link_width;      //硬链接数列所需的宽度
+    int user_width;      //用户名列所需的宽度
+    int group_width;     //用户组列所需的宽度
+    int size_width;      //文件大小列所需的宽度
+}PrintWidths;
+
+
+
+
+
+
 //定义函数make_path：把文件名和其所在目录拼接在一起, 获得文件的完整路径
 char * make_path(const char * directory, const char * name)
 {
@@ -188,7 +204,7 @@ int add_item(FileList * list, const char * directory, const char * name)
     {
         fprintf(stderr, "myls：无法访问'%s'：%s！\n", full_path, strerror(errno));
         
-        free(name_copy);
+        fr实现自己的ls命令ee(name_copy);
         free(full_path);
 
         return 1;
@@ -289,6 +305,39 @@ int compare_items(const FileItem * first, const FileItem * second, const Options
 
 
 
+//定义函数sort_items：使用冒泡排序整理当前目录的文件
+void sort_items(FileList * list, const Options * options)
+{
+    for (int outer = 0; outer < list->count - 1; outer++)
+    {
+        int change = 0;
+
+        for (int inner = 0; inner < list->count - 1 - outer; inner++)
+        {
+            if (compare_items(&(list->items[inner]), &(list->items[inner + 1]), options) > 0)
+            {
+                change = 1;
+
+                FileItem temporary;
+                temporary = list->items[inner];
+
+                list->items[inner] = list->items[inner + 1];
+                list->items[inner + 1] = temporary; 
+            }
+        }
+
+        if (!change)
+        {
+            break;
+        }
+    }
+}
+
+
+
+
+
+
 //定义函数number_width：计算一个非负整数占用的字符数
 int number_width(int number)
 {
@@ -348,34 +397,13 @@ const char * get_group_name(gid_t group_id, char buffer[32])
 
 
 
-//定义函数sort_items：使用冒泡排序整理当前目录的文件
-void sort_items(FileList * list, const Options * options)
+//定义函数calculate_widths：扫描文件列表, 并计算各列在打印输出时的宽度
+PrintWidths calculate_widths(const FileList * list)
 {
-    for (int outer = 0; outer < list->count - 1; outer++)
-    {
-        int change = 0;
+    PrintWidths widths = {0, 0, 0, 0, 0, 0};
 
-        for (int inner = 0; inner < list->count - 1 - outer; inner++)
-        {
-            if (compare_items(&(list->items[inner]), &(list->items[inner + 1]), options) > 0)
-            {
-                change = 1;
-
-                FileItem temporary;
-                temporary = list->items[inner];
-
-                list->items[inner] = list->items[inner + 1];
-                list->items[inner + 1] = temporary; 
-            }
-        }
-
-        if (!change)
-        {
-            break;
-        }
-    }
+    return widths;
 }
-
 
 
 
