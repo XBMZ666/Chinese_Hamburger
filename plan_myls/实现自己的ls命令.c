@@ -588,6 +588,58 @@ void make_time_string(time_t file_time, char buffer[32])
 
 
 
+//定义函数print_long_info：打印输出文件名之前的详细信息
+void print_long_info(const FileItem * item, const PrintWidths * widths)
+{
+    char mode_text[11];
+    char user_buffer[32];
+    char group_buffer[32];
+    char time_text[32];
+    const char * user_name;
+    const char * group_name;
+
+    make_mode_string(item->info.st_mode, mode_text);
+    make_time_String(item->info.st_mtime, time_text);
+
+    user_name = get_user_name(item->info.st_uid, user_buffer);
+    group_name = get_group_name(item->info.st_gid, group_buffer);
+
+    printf("%s %*d ", mode_text, widths->link_width, item->info.st_nlink);
+    printf("%-*s %-*s ", widths->user_width, user_name, widths->group_width, group_name);
+    printf("%*d %s ", widths->size_width, item->info.st_size, time_text);
+
+    return;
+}
+
+
+
+
+
+
+//定义函数print_item：打印输出一项
+void print_item(const FileItem * item, const Options * options, const PrintWidths * widths)
+{
+
+    return;
+}
+
+
+
+
+
+
+//定义函数print_items：打印输出整个文件列表
+void print_items(const FileList * list, const Options * options)
+{
+    
+    return;
+}
+
+
+
+
+
+
 //定义函数parse_options：解析命令行参数
 int parse_options(int argc, char ** argv, Options * options, int * first_path)
 {
