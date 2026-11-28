@@ -113,7 +113,8 @@ char * make_path(const char * directory, const char * name)
 //定义函数add_item：向文件列表中添加新的文件
 int add_item(FileList * list, const char * directory, const char * name)
 {
-    FileItem new_items;
+    FileItem * new_items;
+    int new_capacity = 0;
 
     if (list->count == list->capacity)
     {
@@ -162,7 +163,7 @@ int add_item(FileList * list, const char * directory, const char * name)
 
     if (lstat(full_path, &(list->items[list->count].info)) == -1)      //查询full_path这个位置的详细信息, 并把详细信息存入该文件对应的info
     {
-        fprintf(stderr, "myls：无法访问'%s'：%s！\n");
+        fprintf(stderr, "myls：无法访问'%s'：%s！\n", full_path, strerror(errno));
         
         free(name_copy);
         free(full_path);
@@ -171,7 +172,7 @@ int add_item(FileList * list, const char * directory, const char * name)
     }
 
     list->items[list->count].name = name_copy;
-    list->items[list->path].path = full_path;
+    list->items[list->count].path = full_path;
     list->count++;
 
     return 0;
