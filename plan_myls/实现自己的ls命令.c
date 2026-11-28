@@ -245,6 +245,83 @@ int read_directory(const char * path, int show_all, FileList * list)
 
 
 
+//定义函数compare_items：比较两个文件
+int compare_items(const FileItem * first, const FileItem * second, const Options * options)
+{
+    int result = 0;
+
+    if (options->sort_by_time)
+    {
+        if (first->info.st_mtime > second->info.st_mtime)
+        {
+            //first的文件修改时间比second的文件修改时间新
+            result = -1;
+        }
+
+        else if (first->info.st_mtime < second->info.st_mtime)
+        {
+            //first的文件修改时间比second的文件修改时间晚
+            result = 1;
+        }
+
+        else
+        {
+            result = strcmp(first->name, second->name);
+        }
+    }
+
+    else
+    {
+        //按字典序来比较first和second的文件名
+        result = strcmp(first->name, second->name);
+    }
+
+    if (options->reverse)
+    {
+        return (-result);
+    }
+
+    return result;
+}
+
+
+
+
+
+
+//定义函数sort_items：使用冒泡排序整理当前目录的文件
+void sort_items(FileList * list, const Options * options)
+{
+    for (int outer = 0; outer < list->count - 1; outer++)
+    {
+        int change = 0;
+
+        for (int inner = 0; inner < list->count - 1 - outer; inner++)
+        {
+            if (compare_items(&(list->items[inner]), &(list->items[inner + 1]), options) > 0)
+            {
+                change = 1;
+
+                FileItem temporary;
+                temporary = list->items[inner];
+
+                list->items[inner] = list->items[inner + 1];
+                list->items[inner + 1] = temporary; 
+            }
+        }
+
+        if (!change)
+        {
+            break;
+        }
+    }
+}
+
+
+
+
+
+
 //定义函数parse_options：解析命令行参数
 int parse_options(int argc, char ** argv, Options * options, int * first_path)
 {
