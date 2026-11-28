@@ -455,6 +455,106 @@ PrintWidths calculate_widths(const FileList * list)
 
 
 
+//定义函数make_mode_string：把权限字符串化
+void make_mode_string(mode_t mode, char text[11])
+{
+    const char * permission_chars = "rwxrwxrwx";
+
+    if (S_ISDIR(mode))
+    {
+        text[0] = 'd';
+    }
+
+    else if (S_ISLNK(mode))
+    {
+        text[0] = 'l';
+    }
+
+    else if (S_ISCHR(mode))
+    {
+        text[0] = 'c';
+    }
+
+    else if (S_ISBLK(mode))
+    {
+        text[0] = 'b';
+    }
+
+    else if (S_ISFIFO(mode))
+    {实现自己的ls命令
+        text[0] = 'p';
+    }
+
+    else if (S_ISSOCK(mode))
+    {
+        text[0] = 's';
+    }
+
+    else
+    {
+        text[0] = '-';
+    }
+
+    for (int index = 1; index <= 9; index++)
+    {
+        text[index] = '-';      //每个权限初始化为关闭状态
+
+        //这里的1视作0000000000000001, 1用于表示所在数位对应的位置的权限开启
+        //比如index的值为1时, 则把1左移8个二进制位得到100000000
+        //比如index的值为3时, 则把1左移5个二进制位得到000100000
+        //mode的二进制表示中, 权限部分刚好是从最低位起计数, 总共9个二进制位. 如：110100100
+        if (mode & (1 << (9 - index)))       
+        {
+            text[index] = permission_chars[index - 1];
+        }
+    }
+
+    if (mode & S_ISUID)
+    {
+        if (text[3] == 'x')
+        {
+            text[3] = 's';
+        }
+
+        else
+        {
+            text[3] = 'S';
+        }
+    }
+
+    if (mode & S_ISGID)
+    {
+        if (text[6] == 'x')
+        {
+            text[6] = 's';
+        }
+
+        else
+        {
+            text[6] = 'S';
+        }
+    }
+
+    if (mode & S_ISVTX)
+    {
+        if (text[9] == 'x')
+        {
+            text[9] = 't';
+        }
+
+        else
+        {
+            text[9] = 'T';
+        }
+    }
+
+    text[10] = '\0';
+}
+
+
+
+
+
 //定义函数parse_options：解析命令行参数
 int parse_options(int argc, char ** argv, Options * options, int * first_path)
 {
